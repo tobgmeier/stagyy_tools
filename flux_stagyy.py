@@ -11,6 +11,7 @@ from stagpy import stagyyparsers as sp
 import pickle as pkl
 import pandas as pd
 from scipy.interpolate import interp1d
+import h5py
 pwd = Path('.')
 
 
@@ -100,14 +101,19 @@ botflux_tot = []
 
 
 #Flux is calculated for every ds-th snapshot (every 5th by default)
-ds = 1
+ds = 10
 
 
 #Here, the flux is calculated (this step can be skipped if the flux data was previously saved in flux_data.p)
 if args.skip == False:
     for i in range(args.smin,args.smax+1,ds):
         print("Snapshot number: ",i,n_snapshots+1)
-        step = sdat.snaps[i]
+        try:
+            print("Snapshot number: ", i, n_snapshots+1)
+            step = sdat.snaps[i]
+        except KeyError:
+            print(f"Snapshot {i} does not exist. Skipping...")
+            continue  # Skip to the next iteration if snapshot does not exist
         p_mesh, r_mesh = np.meshgrid(step.geom.p_centers, step.geom.r_centers, indexing="ij")
         phase = p_mesh[:,-1]
         #Transform into astro degrees
@@ -122,8 +128,17 @@ if args.skip == False:
         phase_f = np.array(angles_transform_deg(phase_f))
 
 
-        time_tot.append(step.timeinfo['t']/(60*60*24*365.25)/1e9)
-        print('Time',step.timeinfo['t']/(60*60*24*365.25)/1e9)
+        time_error = False
+        if time_error == False:
+            time_tot.append(step.timeinfo['t']/(60*60*24*365.25)/1e9)
+            print('Time', step.timeinfo['t']/(60*60*24*365.25)/1e9)
+        else:
+            hf = h5py.File('+hdf5/time_botT.h5', 'r')
+            ks = list(hf.keys())
+            n_i = hf[ks[i]]
+            time_step = n_i[0]/(60*60*24*365.25)/1e9 #index needs to be 1 if updated stag is used (but time error seemed to only have happend with old version)
+            time_tot.append(time_step)
+            print('Time (time error)', time_step)
         
         if args.flux == True and args.skip == False:
             phase = phase_f
@@ -232,6 +247,8 @@ if args.flux == True:
     if args.transit_time > 0:
         ma_time = ma_time / args.transit_time
     #Plot surface flux    
+    print('time',ma_time)
+    print(ma_topflux_day)
     ax1.plot(ma_time, ma_topflux_day,'-',color=dayside_color,label='Surface flux dayside')
     ax1.fill_between(ma_time,mmin_topflux_day, mmax_topflux_day,facecolor=dayside_color,alpha=0.2)
     ax1.plot(ma_time, ma_topflux_night,'-',color=nightside_color,label='Surface flux nightside')
@@ -248,7 +265,8 @@ if args.flux == True:
         ax1.plot(ma_time, ma_botflux_tot,'--',color='black',label='CMB flux total')
 
     if args.legend:
-        ax1.legend(loc="lower center", markerscale=4, bbox_to_anchor=(0.5, 1.02), ncol=2)
+        #ax1.legend(loc="upper right", markerscale=4, bbox_to_anchor=(0.5, 1.02), ncol=2)
+        ax1.legend(loc="upper right", markerscale=4, ncol=2)
     if args.transit_time > 0:
         ax1.xaxis.tick_top()
         ax1.xaxis.set_label_position('top') 
@@ -257,7 +275,7 @@ if args.flux == True:
     else:
         ax1.set_xlabel('Time (Gyrs)',fontsize=13)
     ax1.set_ylabel('Heat flux (mW/m$^2$) ',fontsize=13)
-    ax1.set_ylim(-80,500) 
+    ax1.set_ylim(-500,500) #This is arbitrary, change this 
     ax1.tick_params(labelsize=13)
     plt.savefig("flux_plot"+file_ending,dpi=900,bbox_inches='tight',transparent=False)
 
@@ -289,8 +307,8 @@ if args.flux == True:
             lns = l0 + l1 + l2 + l3 + l4 
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
-        ax1.set_ylim(0,1000) #This is quite arbitrary and might have to be changed
-        ax2.set_ylim(0,1000) 
+        ax1.set_ylim(-80,50) #This is quite arbitrary and might have to be changed
+        ax2.set_ylim(-80,100) 
         if args.transit_time > 0:
             ax1.xaxis.tick_top()
             ax1.xaxis.set_label_position('top') 
