@@ -129,16 +129,20 @@ if args.skip == False:
 
 
         time_error = False
-        if time_error == False:
-            time_tot.append(step.timeinfo['t']/(60*60*24*365.25)/1e9)
-            print('Time', step.timeinfo['t']/(60*60*24*365.25)/1e9)
-        else:
-            hf = h5py.File('+hdf5/time_botT.h5', 'r')
-            ks = list(hf.keys())
-            n_i = hf[ks[i]]
-            time_step = n_i[0]/(60*60*24*365.25)/1e9 #index needs to be 1 if updated stag is used (but time error seemed to only have happend with old version)
-            time_tot.append(time_step)
-            print('Time (time error)', time_step)
+        try: 
+            if time_error == False:
+                time_tot.append(step.timeinfo['t']/(60*60*24*365.25)/1e9)
+                print('Time', step.timeinfo['t']/(60*60*24*365.25)/1e9)
+            else:
+                hf = h5py.File('+hdf5/time_botT.h5', 'r')
+                ks = list(hf.keys())
+                n_i = hf[ks[i]]
+                time_step = n_i[0]/(60*60*24*365.25)/1e9 #index needs to be 1 if updated stag is used (but time error seemed to only have happend with old version)
+                time_tot.append(time_step)
+                print('Time (time error)', time_step)
+        except KeyError:
+            print(f"Error accessing time information for snapshot {i}. Skipping to next snapshot.")
+            continue
         
         if args.flux == True and args.skip == False:
             phase = phase_f
