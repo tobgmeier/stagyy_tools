@@ -55,6 +55,32 @@ def angles_transform_deg(phi):
 
     return list(phi_return)
 
+def calculate_optimal_ylim(data, exclude_percentile=90, std_multiplier=2):
+    """
+    Calculate optimal ylim for heatflux data
+
+    Parameters:
+    - data (array-like): heatflux values
+    - exclude_percentile (float): percentile threshold to exclude initial high values
+    - std_multiplier (float): Multiplier for standard deviation to determine ylim
+
+    Returns:
+    - tuple: (ylim_lower, ylim_upper) 
+    """
+
+    data = np.array(data)
+    threshold = np.percentile(data, exclude_percentile)
+    filtered_data = data[data < threshold]
+
+    mean_value = np.mean(filtered_data)
+    std_value = np.std(filtered_data)
+
+    ylim_lower = mean_value - std_multiplier*std_value
+    ylim_upper = mean_value + std_multiplier*std_value
+
+    return ylim_lower, ylim_upper
+
+
 #Default is png, can be changed to pdf using options
 file_ending = ".png"
 
@@ -100,7 +126,7 @@ botflux_tot = []
 
 
 #Flux is calculated for every ds-th snapshot (every 5th by default)
-ds = 10
+ds = 1
 
 
 #Here, the flux is calculated (this step can be skipped if the flux data was previously saved in flux_data.p)
@@ -352,8 +378,10 @@ if args.flux == True:
             lns = l0 + l1 
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
-        ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
-        ax2.set_ylim(-80,100) 
+        #ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
+        #ax2.set_ylim(-80,100) 
+        ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day/1000))
+        ax2.set_ylim(calculate_optimal_ylim(ma_topflux_night))
         if args.transit_time > 0:
             ax1.xaxis.tick_top()
             ax1.xaxis.set_label_position('top') 
