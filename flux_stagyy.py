@@ -279,7 +279,7 @@ if args.flux == True:
     else:
         ax1.set_xlabel('Time (Gyrs)',fontsize=13)
     ax1.set_ylabel('Heat flux (mW/m$^2$) ',fontsize=13)
-    ax1.set_ylim(-500,500) #This is arbitrary, change this 
+    ax1.set_ylim(-20,200) #This is arbitrary, change this 
     ax1.tick_params(labelsize=13)
     plt.savefig("flux_plot"+file_ending,dpi=900,bbox_inches='tight',transparent=False)
 
@@ -312,6 +312,48 @@ if args.flux == True:
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
         ax1.set_ylim(-80,50) #This is quite arbitrary and might have to be changed
+        ax2.set_ylim(-80,100) 
+        if args.transit_time > 0:
+            ax1.xaxis.tick_top()
+            ax1.xaxis.set_label_position('top') 
+            ax1.set_xlabel('Number of overturns',fontsize=13)
+            ax1.set_xlim(0,max_time/args.transit_time)
+        else:
+            ax1.set_xlabel('Time (Gyrs)',fontsize=13)
+            ax1.set_xlim(0,max_time) 
+
+        ax1.set_ylabel('Heat flux (W/m$^2$) ',fontsize=13,color='red')
+        ax2.set_ylabel('Heat flux (mW/m$^2$) ',fontsize=13,color='black')
+
+        ax1.tick_params(labelsize=13)
+        plt.savefig("flux_plot"+file_ending,dpi=900,bbox_inches='tight',transparent=False)
+
+    if args.day_night:
+        #this is for dayside magma ocean and nightside solid
+        #ax1 is in W/m^2 (high flux), ax2 is in mW/m^2 (nightside unless using ns_molten)
+        fig, ax1 = plt.subplots(1,1)
+        l0 = ax1.plot(ma_time, ma_topflux_day/1000,'-',markersize=2.0,color=dayside_color,label='Surface flux dayside')
+        #need to divide by 1000 to get flux in W/m^2
+        print('dayside flux in W/m^2: ', ma_topflux_day/1000)
+        ax1.fill_between(ma_time,np.array(mmin_topflux_day)/1000, np.array(mmax_topflux_day)/1000,facecolor=dayside_color,alpha=0.2)
+        ax1.tick_params(axis='y',labelcolor='red')
+        ax2 = ax1.twinx() #Create a y-axis on the right side (for CMB fluxes in mW/m^2, and potentially the nightside if it's not molten)
+        if args.ns_molten == True:
+            #If nightside is molten (high flux), will be plotted on the left axis in W/m^2
+            l1 = ax1.plot(ma_time, ma_topflux_night/1000,'-.',markersize=2.0,color=nightside_color,label='Surface flux nightside')
+            ax1.fill_between(ma_time,np.array(mmin_topflux_night)/1000, np.array(mmax_topflux_night)/1000,facecolor=nightside_color,alpha=0.2)
+        else:
+            #Nightside not molten, so will be plotted on the right side in mW/m^2
+            l1 = ax2.plot(ma_time, ma_topflux_night,'-.',markersize=2.0,color=nightside_color,label='Surface flux nightside')
+            ax2.fill_between(ma_time,np.array(mmin_topflux_night), np.array(mmax_topflux_night),facecolor=nightside_color,alpha=0.2)
+        ax2.tick_params(axis ='y', labelcolor = 'black') 
+        if args.legend:
+            #ax1.legend(loc="upper right", markerscale=4, bbox_to_anchor=(0.5, 1.2), ncol=1)
+            #ax2.legend(loc="upper left", markerscale=4, bbox_to_anchor=(0.5, 1.2), ncol=2)
+            lns = l0 + l1 
+            labs = [l.get_label() for l in lns]
+            ax1.legend(lns, labs, loc='upper right',facecolor='white')
+        ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
         ax2.set_ylim(-80,100) 
         if args.transit_time > 0:
             ax1.xaxis.tick_top()
