@@ -424,8 +424,8 @@ if args.flux == True:
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
         ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
         ax2.set_ylim(30,40) 
-        ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day/1000,std_multiplier=8))
-        ax2.set_ylim(calculate_optimal_ylim(ma_topflux_night,std_multiplier=20))
+        ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day,std_multiplier=8))
+        #ax2.set_ylim(calculate_optimal_ylim(ma_topflux_night,std_multiplier=20))
         if args.transit_time > 0:
             ax1.xaxis.tick_top()
             ax1.xaxis.set_label_position('top') 
