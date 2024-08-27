@@ -413,9 +413,9 @@ if args.flux == True:
         #ax1.fill_between(ma_time,np.array(mmin_topflux_day)/1000, np.array(mmax_topflux_day)/1000,facecolor=dayside_color,alpha=0.2)
         ax1.tick_params(axis='y',labelcolor='red')
         ax2 = ax1.twinx() #Create a y-axis on the right side (for CMB fluxes in mW/m^2, and potentially the nightside if it's not molten)
-        l1 = ax2.plot(ma_time, ma_topflux_night,'-.',markersize=2.0,color=nightside_color,label='Surface flux nightside')
+        l1 = ax2.plot(ma_time, ma_topflux_night,'-',markersize=2.0,color=nightside_color,label='Surface flux nightside')
         #ax2.fill_between(ma_time,np.array(mmin_topflux_night), np.array(mmax_topflux_night),facecolor=nightside_color,alpha=0.2)
-        ax2.tick_params(axis ='y', labelcolor = 'black') 
+        ax2.tick_params(axis ='y', labelcolor = 'blue') 
         if args.legend:
             #ax1.legend(loc="upper right", markerscale=4, bbox_to_anchor=(0.5, 1.2), ncol=1)
             #ax2.legend(loc="upper left", markerscale=4, bbox_to_anchor=(0.5, 1.2), ncol=2)
