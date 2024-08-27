@@ -103,8 +103,8 @@ parser.add_argument("--time_window", help="time window for roll mean",type=float
 parser.add_argument('--legend', dest='legend', help="If true, legend is plotted",default=False, action='store_true')
 parser.add_argument('--no_cmbflux', dest='no_cmbflux', help="If true, cmb flux is not plotted",default=False, action='store_true')
 parser.add_argument('--cmb_separate', dest='cmb_separate', help="If true, cmb flux is plotted on separate axis (probably not needed without magma oceans)",default=False, action='store_true')
-parser.add_argument('--daymelt', dest='flux_daymelt', help="If true, dayside is plotted on W/m^2 and nightside on mW/m^2",default=False, action='store_true')
-parser.add_argument('--all_solid', dest='flux_all_solid', help="If true, dayside and nightside are on mW/m^2",default=False, action='store_true')
+parser.add_argument('--daymelt', dest='daymelt', help="If true, dayside is plotted on W/m^2 and nightside on mW/m^2",default=False, action='store_true')
+parser.add_argument('--all_solid', dest='all_solid', help="If true, dayside and nightside are on mW/m^2",default=False, action='store_true')
 parser.add_argument('--ns_molten', dest='ns_molten', help="If true, nightside flux is plotted in W/m2",default=False, action='store_true')
 
 args = parser.parse_args()
