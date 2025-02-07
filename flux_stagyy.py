@@ -101,7 +101,7 @@ parser.add_argument("--transit_time", help="plot overturn time on top instead of
 parser.add_argument("--max_time", help="maximum time for xaxis in Gyrs",type=float,default=-1.0)
 parser.add_argument("--time_window", help="time window for roll mean",type=float,default=-1.0)
 parser.add_argument('--legend', dest='legend', help="If true, legend is plotted",default=False, action='store_true')
-parser.add_argument('--no_cmbflux', dest='no_cmbflux', help="If true, cmb flux is not plotted",default=False, action='store_true')
+parser.add_argument('--cmbflux', dest='cmbflux', help="If true, cmb flux is plotted",default=False, action='store_true')
 parser.add_argument('--cmb_separate', dest='cmb_separate', help="If true, cmb flux is plotted on separate axis (probably not needed without magma oceans)",default=False, action='store_true')
 parser.add_argument('--daymelt', dest='daymelt', help="If true, dayside is plotted on W/m^2 and nightside on mW/m^2",default=False, action='store_true')
 parser.add_argument('--all_solid', dest='all_solid', help="If true, dayside and nightside are on mW/m^2",default=False, action='store_true')
@@ -181,17 +181,20 @@ if args.skip == False:
             topflux_night.append(np.median(sflux_night))
             topflux_tot.append(np.median(sflux_tot))
 
-            #Get cmb fluxes
-            cmbflux_tot = field.get_sfield(step, 'fbot')*1000.0
-            cmbflux_day = cmbflux_tot[np.where(phase < 180.0)]
-            cmbflux_night = cmbflux_tot[np.where(phase >= 180.0)]
-            #There's usually less outliers for the CMB flux, but could also take median here
-            botflux_day.append(np.mean(cmbflux_day))
-            botflux_night.append(np.mean(cmbflux_night))
-            botflux_tot.append(np.mean(cmbflux_tot))
-
-            cmbflux_total = np.array(cmbflux_tot)
             topflux_total = np.array(sflux_tot)
+
+            #Get cmb fluxes
+            if args.cmbflux:
+                cmbflux_tot = field.get_sfield(step, 'fbot')*1000.0
+                cmbflux_day = cmbflux_tot[np.where(phase < 180.0)]
+                cmbflux_night = cmbflux_tot[np.where(phase >= 180.0)]
+                #There's usually less outliers for the CMB flux, but could also take median here
+                botflux_day.append(np.mean(cmbflux_day))
+                botflux_night.append(np.mean(cmbflux_night))
+                botflux_tot.append(np.mean(cmbflux_tot))
+
+                cmbflux_total = np.array(cmbflux_tot)
+            
 
     if args.flux == True:
         with open("flux_data.p", "wb") as f:
@@ -286,7 +289,7 @@ if args.flux == True:
     #ax1.plot(ma_time, ma_topflux_tot,'-',color='black',label='Surface flux total')
 
     #Plot CMB flux
-    if args.no_cmbflux == False:
+    if args.cmbflux == True:
         ax1.plot(ma_time, ma_botflux_day,'--',color='lightsalmon',label='CMB flux dayside')
         ax1.fill_between(ma_time,mmin_botflux_day, mmax_botflux_day,facecolor='salmon',alpha=0.2)
         ax1.plot(ma_time, ma_botflux_night,'--',color='skyblue',label='CMB flux nightside')
