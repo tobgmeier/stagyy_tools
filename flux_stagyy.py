@@ -276,8 +276,8 @@ if args.flux == True:
     if args.transit_time > 0:
         ma_time = ma_time / args.transit_time
     #Plot surface flux    
-    print('time',ma_time)
-    print(ma_topflux_day)
+    #print('time',ma_time)
+    #print(ma_topflux_day)
     ax1.plot(ma_time, ma_topflux_day,'-',color=dayside_color,label='Surface flux dayside')
     ax1.fill_between(ma_time,mmin_topflux_day, mmax_topflux_day,facecolor=dayside_color,alpha=0.2)
     ax1.plot(ma_time, ma_topflux_night,'-',color=nightside_color,label='Surface flux nightside')
@@ -361,9 +361,9 @@ if args.flux == True:
         fig, ax1 = plt.subplots(1,1)
         l0 = ax1.plot(ma_time, ma_topflux_day/1000,'-',markersize=2.0,color=dayside_color,label='Surface flux dayside')
         #need to divide by 1000 to get flux in W/m^2
-        print('time:', ma_time)
-        print('nigthside flux:', ma_topflux_night)
-        print('dayside flux in W/m^2: ', ma_topflux_day/1000)
+        #print('time:', ma_time)
+        #print('nigthside flux:', ma_topflux_night)
+        #print('dayside flux in W/m^2: ', ma_topflux_day/1000)
         #ax1.fill_between(ma_time,np.array(mmin_topflux_day)/1000, np.array(mmax_topflux_day)/1000,facecolor=dayside_color,alpha=0.2)
         ax1.tick_params(axis='y',labelcolor='red')
         ax2 = ax1.twinx() #Create a y-axis on the right side (for CMB fluxes in mW/m^2, and potentially the nightside if it's not molten)
@@ -373,7 +373,7 @@ if args.flux == True:
             ax1.fill_between(ma_time,np.array(mmin_topflux_night)/1000, np.array(mmax_topflux_night)/1000,facecolor=nightside_color,alpha=0.2)
         else:
             #Nightside not molten, so will be plotted on the right side in mW/m^2
-            l1 = ax2.plot(ma_time, ma_topflux_night,'-.',markersize=2.0,color=nightside_color,label='Surface flux nightside')
+            l1 = ax2.plot(ma_time, ma_topflux_night,'-',markersize=2.0,color=nightside_color,label='Surface flux nightside')
             #ax2.fill_between(ma_time,np.array(mmin_topflux_night), np.array(mmax_topflux_night),facecolor=nightside_color,alpha=0.2)
         ax2.tick_params(axis ='y', labelcolor = 'blue') 
         if args.legend:
@@ -383,8 +383,8 @@ if args.flux == True:
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
         ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
-        ax2.set_ylim(30,40) 
-        #ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day/1000,std_multiplier=8))
+        ax2.set_ylim(0,100) 
+        ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day/1000,std_multiplier=8))
         #ax2.set_ylim(calculate_optimal_ylim(ma_topflux_night,std_multiplier=20))
         if args.transit_time > 0:
             ax1.xaxis.tick_top()
@@ -423,7 +423,7 @@ if args.flux == True:
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='upper right',facecolor='white')
         ax1.set_ylim(-80,5000) #This is quite arbitrary and might have to be changed
-        ax2.set_ylim(30,40) 
+        ax2.set_ylim(0,100) 
         ax1.set_ylim(calculate_optimal_ylim(ma_topflux_day,std_multiplier=8))
         #ax2.set_ylim(calculate_optimal_ylim(ma_topflux_night,std_multiplier=20))
         if args.transit_time > 0:
