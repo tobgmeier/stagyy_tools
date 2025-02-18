@@ -85,6 +85,7 @@ figs_nightside, axes_nightside = {}, {} #creating empty dictionaries for the fig
 
 for group in groups: #adding figsize for each element
     figs_dayside[group], axes_dayside[group] = plt.subplots(figsize=(6.4,4.8)) 
+    figs_nightside[group], axes_nightside[group] = plt.subplots(figsize=(6.4,4.8)) 
 
 for group, subfolders in groups.items(): #this will loop through each key and value (here each key contains the subfolders)
     for i, folder in enumerate(subfolders):
