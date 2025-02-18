@@ -26,6 +26,31 @@ def check_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+def remove_outliers(time, data, threshold=1.0):
+    # Select indices where time > threshold
+    mask = time > threshold
+    data_after_threshold = data[mask]
+    
+    # Compute IQR for data after threshold
+    q1, q3 = np.percentile(data_after_threshold, [25, 75])
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+
+    # Filter only the part after the threshold
+    filtered_data_after = data_after_threshold[(data_after_threshold >= lower_bound) & (data_after_threshold <= upper_bound)]
+    filtered_time_after = time[mask][(data_after_threshold >= lower_bound) & (data_after_threshold <= upper_bound)]
+
+    # Keep all data before the threshold
+    time_before = time[~mask]
+    data_before = data[~mask]
+
+    # Combine both parts back together
+    filtered_time = np.concatenate((time_before, filtered_time_after))
+    filtered_data = np.concatenate((data_before, filtered_data_after))
+
+    return filtered_time, filtered_data
+
 groups = {
     "negative": ['test01', 'test02'],
     "low": ["test04", "test05", "test07", "test09", "test15", "test16"],
@@ -55,7 +80,9 @@ subfolders = [data_root / f"test{str(i).zfill(2)}" for i in range(1, 17) if i !=
 colors = sns.color_palette("Set2", n_colors=len(subfolders))
 
 figs_dayside, axes_dayside = {}, {} #creating empty dictionaries for the figure and axes (each dictionary element will have a separate figure)
-fig_nightside, ax_nightside = plt.subplots(figsize=(6.4,4.8))  
+figs_nightside, axes_nightside = {}, {} #creating empty dictionaries for the figure and axes (each dictionary element will have a separate figure)
+
+
 for group in groups: #adding figsize for each element
     figs_dayside[group], axes_dayside[group] = plt.subplots(figsize=(6.4,4.8)) 
 
@@ -73,8 +100,8 @@ for group, subfolders in groups.items(): #this will loop through each key and va
             time_tot, topflux_tot, topflux_day, topflux_night, botflux_tot, botflux_day, botflux_night = map(np.array, pkl.load(f))
         
         # Add to dayside plot (dividing by 1000 for correct scaling)
-        axes_dayside[group].plot(time_tot, topflux_day / scaling[group], label=f'{folder}',color=colors[i % len(colors)])
-        ax_nightside.plot(time_tot, topflux_night, label=f'{folder}',color=colors[i % len(colors)])
+        axes_dayside[group].plot(time_tot, topflux_day / scaling[group], label=f'{folder}',color=colors[i])
+        axes_nightside[group].plot(time_tot, topflux_night, label=f'{folder}',color=colors[i])
         
         # Add to nightside plot
         #axes_nightside.plot(time_tot, topflux_night, label=f'{folder}',color=colors[i % len(colors)])
@@ -98,13 +125,12 @@ for group, subfolders in groups.items(): #this will loop through each key and va
     figs_dayside[group].tight_layout()
     figs_dayside[group].savefig(f"plots/flux_dayside_{group}.pdf", dpi=300)
 
-    
-    #Nightside Plot (no groups here)
-    ax_nightside.set_xlabel("Time (Gyrs)")
-    ax_nightside.set_ylabel("Heat Flux (mW/m²)")
-    ax_nightside.set_title("Nightside Heat Flux for All Runs")
-    ax_nightside.set_ylim(25,80)
-    ax_nightside.legend()
-    fig_nightside.savefig("plots/flux_nightside_all.png", dpi=300)
-    plt.close(fig_nightside)
+    #Nightside Plot 
+    axes_nightside[group].set_xlabel("Time (Gyrs)")
+    axes_nightside[group].set_ylabel("Heat Flux (mW/m$^2$)")
+    #axes_nightside[group].set_title("Nightside heat Flux for All Runs")
+    axes_nightside[group].set_ylim(25,80)
+    axes_nightside[group].legend()
+    figs_dayside[group].tight_layout()
+    figs_nightside[group].savefig(f"plots/flux_nightside_{group}.pdf", dpi=300)
     
