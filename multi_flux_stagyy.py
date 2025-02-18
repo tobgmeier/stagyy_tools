@@ -102,6 +102,8 @@ for group, subfolders in groups.items(): #this will loop through each key and va
         
         # Add to dayside plot (dividing by 1000 for correct scaling)
         axes_dayside[group].plot(time_tot, topflux_day / scaling[group], label=f'{folder}',color=colors[i])
+        if folder == "test08":
+            topflux_night = np.where((time_tot > 1.0) & (topflux_night > 500), np.nan, topflux_night)
         axes_nightside[group].plot(time_tot, topflux_night, label=f'{folder}',color=colors[i])
         
         # Add to nightside plot
