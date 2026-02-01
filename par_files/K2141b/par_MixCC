@@ -1,0 +1,317 @@
+&switches
+    dimensional_units = .true.
+    total_pressure = .true.
+    try_continue = .true.
+    compressible = .true.
+    tracers = .true.
+    melting = .true.
+    phase_changes = .true.
+    plates_analyse = .true.
+    dens_actual = .true.
+    dens_strat = .true.
+    composition = .false.
+/
+
+&geometry
+    shape = 'spherical'
+    d_dimensional = 4450000.0
+    r_cmb = 5359000.0
+    d_dim_top = 0
+    nxtot = 1
+    nytot = 1024
+    nztot = 64
+    aspect_ratio = 3.15, 6.4
+    zspacing_mode = 'function_exp'
+    dresl_surf = 4.0
+    wresl_surf = 0.07
+    dresl_cmb = 2.0
+    wresl_cmb = 0.05
+/
+
+&refstate
+    rh = 5.2e-12
+    tref_surf = 700.0
+    deltat_dimensional = 3500
+    g_dimensional = 21.8
+    expan_dimensional = 1e-05
+    dens_dimensional = 3300.0
+    birch_murnaghan = .true.
+    k0(1:5,1) = 210000000000.0, 210000000000.0, 85000000000.0, 163000000000.0,
+                163000000000.0
+    k0(1:5,2) = 210000000000.0, 210000000000.0, 85000000000.0, 163000000000.0,
+                163000000000.0
+    k0(1,3) = 30000000000.0
+    k0(1,4) = 30000000000.0
+    kp(1:5,1) = 3.9, 3.9, 4.0, 4.0, 4.0
+    kp(1:5,2) = 3.9, 3.9, 4.0, 4.0, 4.0
+    kp(1,3) = 6.0
+    kp(1,4) = 6.0
+    gr_s(1:5,1) = 1.3, 1.3, 0.85, 1.3, 1.3
+    gr_s(1:5,2) = 1.3, 1.3, 0.85, 1.3, 1.3
+    gr_s(1,3) = 0.6
+    gr_s(1,4) = 0.6
+    ex_tkappa(1:5,1) = 1.0, 1.0, 1.0, 1.0, 1.0
+    ex_tkappa(1:5,2) = 1.0, 1.0, 1.0, 1.0, 1.0
+    ex_tkappa(1:2,3) = , 1.0
+    ex_tkappa(1:2,4) = , 1.0
+    q_gamma(1,1) = ,
+    q_gamma(1,2) = ,
+    q_gamma(1,3) = -1.3
+    q_gamma(1,4) = -1.3
+    phase_assemblage_varies_with_c = .true.
+    core_cooling = .true.
+/
+
+&boundaries
+    x_bc = 'ww'
+    y_bc = 'ww'
+    topt_mode = 'radiative'
+    topt_val = 50
+    bott_mode = 'iso'
+    bott_val = 6500
+    topv_mode = 'free-slip'
+    botv_mode = 'free-slip'
+    topt_locked_subsolar = 3000
+    topt_locked_farside = 50
+    zero_surface_mean_flow = .false.
+/
+
+&t_init
+    imode_t = 'bndry_layer_tl'
+    amp_t = 50
+    t0_init = 2200
+    blthick = 160000.0
+    blthick_cmb = 160000.0
+/
+
+&timein
+    iord = 2
+    finish_at_time = 6.6e9
+    nsteps = 18000000
+    nwrite = 100
+    alpha_adv = 0.5
+    alpha_diff = 1e+30
+    advection_scheme = 'TVD'
+    diffusion_implicit = .true.
+    diffusion_beta = 1.0
+    diffusion_errmax = 1e-06
+    diffusion_alpha = 0.7
+    diffusion_nrelax = 3
+/
+
+&viscosity
+    eta0 = 1e+21
+    pressuredeprheology = .true.
+    eta_userefstatepressure = .true.
+    melt_phase_has_solid_viscosity = .false.
+    d0_eta = 0.0
+    phase_dep_eeta = .true.
+    pressuredepvact = .true.
+    ietalaw = 1
+    t0_eta = 1600
+    eta_max = 1e+28
+    eta_min = 1e+16
+    e_eta(1,1,1) = 162000.0
+    e_eta(1,2,1) = 370000.0
+    e_eta(1,3,1) = 300000.0
+    e_eta(1,4,1) = 300000.0
+    e_eta(1,5,1) = ,
+    e_eta(1,1,2) = 162000.0
+    e_eta(1,2,2) = 370000.0
+    e_eta(1,3,2) = 300000.0
+    e_eta(1,4,2) = 300000.0
+    e_eta(1,5,2) = 300000.0
+    e_eta(1,1,3) = 162000.0
+    e_eta(1,2,3) = 370000.0
+    e_eta(1,3,3) = 300000.0
+    e_eta(1,4,3) = 300000.0
+    e_eta(1,5,3) = ,
+    e_eta(1,1,4) = 162000.0
+    e_eta(1,2,4) = 370000.0
+    e_eta(1,3,4) = 300000.0
+    e_eta(1,4,4) = 300000.0
+    e_eta(1,5,4) = 300000.0
+    v_eta(1,1,1) = 1.4e-06
+    v_eta(1,2,1) = 3.65e-06
+    v_eta(1,3,1) = 5e-06
+    v_eta(1,4,1) = 5e-06
+    v_eta(1,5,1) = ,
+    v_eta(1,1,2) = 1.4e-06
+    v_eta(1,2,2) = 3.65e-06
+    v_eta(1,3,2) = 5e-06
+    v_eta(1,4,2) = 5e-06
+    v_eta(1,5,2) = 5e-06
+    v_eta(1,1,3) = 1.4e-06
+    v_eta(1,2,3) = 3.65e-06
+    v_eta(1,3,3) = 5e-06
+    v_eta(1,4,3) = 5e-06
+    v_eta(1,5,3) = ,
+    v_eta(1,1,4) = 1.4e-06
+    v_eta(1,2,4) = 3.65e-06
+    v_eta(1,3,4) = 5e-06
+    v_eta(1,4,4) = 5e-06
+    v_eta(1,5,4) = 5e-06
+    pdecay_v(1,1,1) = 1610000000000.0
+    pdecay_v(1,2,1) = 200000000000.0
+    pdecay_v(1,3,1) = 1e+40
+    pdecay_v(1,4,1) = 1e+40
+    pdecay_v(1,5,1) = ,
+    pdecay_v(1,1,2) = 1610000000000.0
+    pdecay_v(1,2,2) = 200000000000.0
+    pdecay_v(1,3,2) = 1e+30
+    pdecay_v(1,4,2) = 1e+30
+    pdecay_v(1,5,2) = 1e+30
+    pdecay_v(1,1,3) = 1610000000000.0
+    pdecay_v(1,2,3) = 200000000000.0
+    pdecay_v(1,3,3) = 1e+30
+    pdecay_v(1,4,3) = 1e+30
+    pdecay_v(1,5,3) = ,
+    pdecay_v(1,1,4) = 1610000000000.0
+    pdecay_v(1,2,4) = 200000000000.0
+    pdecay_v(1,3,4) = 1e+30
+    pdecay_v(1,4,4) = 1e+30
+    pdecay_v(1,5,4) = 1e+30
+    deta_p_correct_jumps = .false.
+    deta_p(1:5,1) = 1.9, 300.0, 1.0, 1.0, ,
+    deta_p(1:5,2) = 1.9, 300.0, 1.0, 1.0, 1.0
+    deta_p(1:5,3) = 1.9, 300.0, 1.0, 1.0, ,
+    deta_p(1:5,4) = 1.9, 300.0, 1.0, 1.0, 1.0
+    plasticity = .false.
+    stressy_eta = 1000000000.0
+    dstressy_eta_dp = 0.01
+    cohesion_eta = 1000000.0
+    frictioncoeff_eta = 0.1
+    rheological_transition_solid = .false.
+/
+
+&iteration
+    errmax = 0.0001
+    relax_kernel = 'direct'
+/
+
+&multi
+/
+
+&compin
+/
+
+&phase
+    nphase_systems = 4
+    sys_ol = 1
+    sys_pxgt = 2
+    sys_melt_ol = 3
+    sys_melt_pxgt = 4
+    nphase(:) = 3, 4, 0, 0
+    tp0(:,1) = 2300, 1900.0, 1600.0, ,
+    tp0(:,2) = 2300, 1900.0, 1600.0, 1000.0
+    tp0(:,3) = 0.0
+    tp0(:,4) = 0.0
+    phase_mode(:,1) = 'function', 'discont   ', 'discont   ', ,
+    phase_mode(:,2) = 'function', 'eff_alpha ', 'eff_alpha ', 'function'
+    phase_mode(:,3) = 'none'
+    phase_mode(:,4) = 'none'
+    dp0(:,1) = 2740000.0, 660000.0, 410000.0, ,
+    dp0(:,2) = 2740000.0, 720000.0, 400000.0, 40000.0
+    drho_p(:,1) = 61.6, 400.0, 180, ,
+    drho_p(:,2) = 61.6, 400.0, 150.0, 350.0
+    clap(:,1) = 10000000.0, -2500000.0, 2500000.0, ,
+    clap(:,2) = 10000000.0, 1000000.0, 1000000.0, 1500000.0
+    w_p(:,1) = 25000.0, 25000.0, 25000.0, ,
+    w_p(:,2) = 25000.0, 75000.0, 75000.0, 25000.0
+    ol_frac_ref = 0.6
+    basalt_frac_ref = 0.2
+    effective_cp_alpha = .true.
+    scale_pcdepths = .true.
+/
+
+&melt
+    eruption = .true.
+    intrusion = .false.
+    erupt_fraction = 0.3
+    intrude_fraction = 0.7
+    intrude_position = 'base_crust'
+    d_erupt_earth = 300000.0
+    harzburgite_melts = .true.
+    melt_segregation = .false.
+    latent_heat = 600000.0
+    magma_effective_tcond = .true.
+    magma_tcond_max = 1000000.0
+    magma_tcond_mode = 'step'
+    solidus_function = 'simple'
+    p_dependent_solidus = .false.
+    cf_dependent_tmelting = .true.
+    magma_toptbl_const = 0.0
+    latent_heat_melt = 600000.0
+    solid_tsurf = -1000.0
+    suppress_asth = .false.
+    melt_phase_systems = .true.
+/
+
+&continents
+/
+
+&tracersin
+    imode_tra = 'even+ran'
+    basalt_harzburgite = .true.
+    ntracers_per_cell = 15
+    tracers_temperature = .true.
+    tracers_everywhere = .true.
+    traceelement_carbon = .true.
+    traceelement_water = .true.
+    traceelement_nitrogen = .true.
+    dpartition_carbon = 0.00055
+    dpartition_water = 0.01
+    dpartition_nitrogen = 0.0006
+    tracers_timemelt = .true.
+    tracers_timeeruptintrude = .true.
+/
+
+&grainsize
+/
+
+&plot
+    npix = 400000
+    plot_file_stem = '+im/earthDIM'
+    t_plot = .false.
+    tcond_plot = .false.
+    eta_plot = .false.
+    f_plot = .false.
+    rho_plot = .false.
+    rhs_plot = .false.
+    v_plot = .false.
+    c_plot = .false.
+    expan_plot = .false.
+    vd_plot = .false.
+    cc_plot = .false.
+    carbon_plot = .false.
+/
+
+&ioin
+    output_format = 'hdf5'
+    output_file_stem = '+op/earthDIM'
+    t_write = .true.
+    eta_write = .true.
+    vp_write = .true.
+    f_write = .true.
+    heatflux_write = .true.
+    hdf5_output_folder = '+hdf5'
+    input_format = 'hdf5'
+    rheo_write = .true.
+    tcond_write = .false.
+    tra_write = .true.
+    delete_old_trafiles = .false.
+    erupt_hf_write = .true.
+    c_write = .true.
+    crust_write = .true.
+    bs_write = .true.
+    hz_write = .true.
+    rho_write = .false.
+    vd_write = .false.
+    edot_write = .false.
+/
+
+&postprocessing
+/
+
+&atm_stuff
+/
